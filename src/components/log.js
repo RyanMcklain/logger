@@ -81,9 +81,13 @@ class Log extends React.Component {
   }
 
   updateClockTime(event) {
+    if (!event.target.name) {
+      return;
+    }
+
+    const unixClockTime = moment(event.target.value, 'HH:mm').valueOf();
     this.setState({
-      endTime: event.target.value,
-      startTime: event.target.value
+      [event.target.name]: unixClockTime
     });
   }
 
