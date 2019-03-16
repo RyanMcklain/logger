@@ -1,22 +1,22 @@
 import React from 'react';
 
-const Clock = ({ start, end, onChange, onFocus, onBlur }) => {
+const Clock = ({ time, onChange, onFocus, onBlur }) => {
   return (
     <span>
       <input
-        name="startTime"
+        name="formattedTime"
         type="text"
-        value={ start }
+        value={ time }
         onFocus={ onFocus }
         onBlur={ onBlur }
-        onChange={ onChange } />-
-      <input
+        onChange={ onChange } />
+      {/* <input
         name="endTime"
         type="text"
         value={ end }
         onFocus={ onFocus }
         onBlur={ onBlur }
-        onChange={ onChange } />
+        onChange={ onChange } /> */}
     </span>
   );
 };

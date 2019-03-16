@@ -5,14 +5,14 @@ const style = {
   fontSize: '10vw'
 };
 
-const Date = ({ date, onChange }) => {
+const Date = ({ date, onChange, onMessageClick }) => {
   let message = ''
   if (moment(date, 'YYYY-MM-DD').isAfter(moment(), 'days')) {
     message = 'are you seeing into the future?';
   }
 
   if (moment(date, 'YYYY-MM-DD').isBefore(moment(), 'days')) {
-    message = 'you cannot change the past.';
+    message = 'The past is already gone. Forget about it. Focus on this day. Live it.';
   }
 
   return (
@@ -22,7 +22,7 @@ const Date = ({ date, onChange }) => {
         style={ style }
         value={ date }
         onChange={ onChange } />
-      <div>{ message }</div>
+      <div onClick={ onMessageClick }>{ message }</div>
     </div>
   );
 };

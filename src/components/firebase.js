@@ -9,6 +9,6 @@ var config = {
   storageBucket: "logger-fe3bd.appspot.com",
   messagingSenderId: "119768735200"
 };
-const firebaseApplication = firebase.initializeApp(config);
-const defaultDatabase = firebaseApplication.database();
-console.log(defaultDatabase);
+// const firebaseApplication = firebase.initializeApp(config);
+// const defaultDatabase = firebaseApplication.database();
+// console.log(defaultDatabase);

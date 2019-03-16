@@ -17,22 +17,24 @@ class Log extends React.Component {
     const format = 'HH:mm:ss';
     // let endTime = props.time.end && moment(props.time.end).format(format);
     // let startTime = moment(props.time.start).format(format);
-    let endTime = props.time.end;
-    let startTime = props.time.start;
+    // let endTime = props.time.end;
+    // let startTime = props.time.start;
 
-    if (props.last) {
-      endTime = moment().format(format);
+    let formattedTime = props.time;
+    if (props.last || props.first) {
+      formattedTime = moment().format(format);
     }
 
-    if (props.first) {
-      startTime = moment().format(format);
-    }
+    // if (props.first) {
+    //   startTime = moment().format(format);
+    // }
 
     this.state = {
       format,
       text: props.text,
-      endTime,
-      startTime,
+      formattedTime,
+      // endTime,
+      // startTime,
       userSetEndTime: false
     };
 
@@ -51,13 +53,15 @@ class Log extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.time.start !== prevProps.time.start) {
+    if (this.props.formattedTime !== prevProps.formattedTime) {
       // TODO: this is a case for just determining if a new log added.
       // clearer logic? also why is this not in the constructor?
       // I remember it has something to do with last/first props, but cannot
       // recall exactly what.
+      const formattedTime = moment(this.props.time.start, this.state.format).format(this.state.format);
+      console.log('formattedTime', formattedTime);
       this.setState({
-        startTime: moment(this.props.time.start, this.state.format).format(this.state.format),
+        formattedTime,
         text: ''
       })
     }
@@ -70,7 +74,7 @@ class Log extends React.Component {
 
   tick() {
     this.setState({
-      endTime: moment().format(this.state.format)
+      formattedTime: moment().format(this.state.format)
     });
   }
 
@@ -88,24 +92,25 @@ class Log extends React.Component {
      * @const {string} startDate - possible value: "2019-03-15 07:32".
      * @const {string} endDate - possible value: "2019-03-15 07:32".
     */
-    const unix = moment(this.props.date).valueOf();
-    const startDate = `${this.props.date} ${this.state.startTime}`;
+    // const unix = moment(this.props.date).valueOf();
+    // const startDate = `${this.props.date} ${this.state.startTime}`;
     // TODO: is adding seconds to a date that contains only minutes will screw this up?
-    const startUnix = moment(startDate, 'YYYY-MM-DD HH:mm:ss').valueOf();
-    const endDate = `${this.props.date} ${this.state.endTime}`;
-    const endUnix = moment(endDate, 'YYYY-MM-DD HH:mm:ss').valueOf();
+    // const startUnix = moment(startDate, 'YYYY-MM-DD HH:mm:ss').valueOf();
+    const date = `${this.props.date} ${this.state.formattedTime}`;
+    const unix = moment(date, 'YYYY-MM-DD HH:mm:ss').valueOf();
 
 
     this.props.onClick({
-      id: startUnix + this.state.text,
+      id: unix + this.state.text,
       text: this.state.text,
+      formattedTime: this.state.formattedTime,
       unix,
-      time: {
-        start: this.state.startTime,
-        end: this.state.endTime,
-        startUnix,
-        endUnix
-      }
+      // time: {
+      //   start: this.state.startTime,
+      //   end: this.state.endTime,
+      //   startUnix,
+      //   endUnix
+      // }
     });
   }
 
@@ -140,15 +145,13 @@ class Log extends React.Component {
 
   render() {
     const { last, first } = this.props;
-    console.log(this.state.text, this.state.startTime);
     return (
       <div style={ style }>
         <Clock
           onFocus={ this.stopClock }
           onBlur={ this.startClock }
           onChange={ this.updateClockTime }
-          start={ this.state.startTime }
-          end={ this.state.endTime } />
+          time={ this.state.formattedTime } />
         <Text
           text={ this.state.text }
           onChange={ this.updateText } />

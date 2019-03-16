@@ -9,28 +9,43 @@ import Manipura from './manipura';
 import Date from './date';
 
 const fooTime = 1552422242000;
+// const fooLogs = [
+//   {
+//     id: 1,
+//     text: 'foo',
+//     unix: fooTime,
+//     time: {
+//       start: moment(fooTime).format('HH:mm'),
+//       startUnix: fooTime,
+//       end: moment(fooTime).add(1, 'hour').format('HH:mm'),
+//       endUnix: moment(fooTime).add(1, 'hour').valueOf()
+//     }
+//   },
+//   {
+//     id: 2,
+//     text: 'foolord',
+//     unix: fooTime,
+//     time: {
+//       start: moment(fooTime).add(1, 'hour').format('HH:mm'),
+//       startUnix: moment(fooTime).add(1, 'hour').valueOf(),
+//       end: moment(fooTime).add(0.5, 'hour').format('HH:mm'),
+//       endUnix: moment(fooTime).add(0.5, 'hour').valueOf()
+//     }
+//   }
+// ];
+
 const fooLogs = [
   {
     id: 1,
     text: 'foo',
     unix: fooTime,
-    time: {
-      start: moment(fooTime).format('HH:mm'),
-      startUnix: fooTime,
-      end: moment(fooTime).add(1, 'hour').format('HH:mm'),
-      endUnix: moment(fooTime).add(1, 'hour').valueOf()
-    }
+    formattedTime: moment(fooTime).add(1, 'hour').format('HH:mm')
   },
   {
     id: 2,
     text: 'foolord',
     unix: fooTime,
-    time: {
-      start: moment(fooTime).add(1, 'hour').format('HH:mm'),
-      startUnix: moment(fooTime).add(1, 'hour').valueOf(),
-      end: moment(fooTime).add(0.5, 'hour').format('HH:mm'),
-      endUnix: moment(fooTime).add(0.5, 'hour').valueOf()
-    }
+    formattedTime: moment(fooTime).add(0.5, 'hour').format('HH:mm')
   }
 ];
 
@@ -45,6 +60,7 @@ class Logs extends React.Component {
     this.logsUI = this.logsUI.bind(this);
     this.setLog = this.setLog.bind(this);
     this.changeDate = this.changeDate.bind(this);
+    this.focusOnToday = this.focusOnToday.bind(this);
   }
 
   setLog(logData) {
@@ -58,7 +74,7 @@ class Logs extends React.Component {
       moment(log.unix).isSame(moment(this.state.date), 'day')
     ));
 
-    const singleLog = (
+    const firstLog = (
       <Log
         key="firstLog"
         onClick={ this.setLog }
@@ -66,14 +82,9 @@ class Logs extends React.Component {
         first
         last />
     );
-    if (logs.length === 0) {
-      return singleLog;
-    }
 
-    const lastTime = logs[logs.length - 1].time.end;
-    const nextTime = {
-      start: lastTime,
-      end: null
+    if (logs.length === 0) {
+      return moment(this.state.date).isSame(moment(), 'day') ? firstLog : null;
     }
 
     const ordinaryLog = log => (
@@ -81,7 +92,7 @@ class Logs extends React.Component {
         key={ log.id }
         text={ log.text }
         date={ this.state.date }
-        time={ log.time } />
+        time={ log.formattedTime } />
     );
 
     const lastLog = (
@@ -89,13 +100,15 @@ class Logs extends React.Component {
         key="lastLog"
         onClick={ this.setLog }
         date={ this.state.date }
-        time={ nextTime }
+        time={ logs[logs.length - 1].formattedTime }
         last />
     );
 
-    return logs
-      .map(ordinaryLog)
-      .concat(lastLog);
+    if (moment(this.state.date).isBefore(moment(), 'day')) {
+      return logs.map(ordinaryLog);
+    }
+
+    return logs.map(ordinaryLog).concat(lastLog);
   }
 
   changeDate(event) {
@@ -104,10 +117,19 @@ class Logs extends React.Component {
     });
   }
 
+  focusOnToday() {
+    this.setState({
+      date: moment().format('YYYY-MM-DD')
+    });
+  }
+
   render() {
     return (
       <Fragment>
-        <Date onChange={ this.changeDate } date={ this.state.date } />
+        <Date
+          onChange={ this.changeDate }
+          onMessageClick={ this.focusOnToday }
+          date={ this.state.date } />
         { this.logsUI() }
         <Manipura
           logs={ this.state.logs }

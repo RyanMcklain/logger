@@ -35,7 +35,8 @@ class Manipura extends React.Component {
 
     const totalSeconds = this.props.logs
       .filter(({ unix }) => moment(this.props.currentDate).isSame(unix, 'day'))
-      .reduce((acc, { time }) => acc + time.endUnix - time.startUnix, 0);
+      // TODO: this is not an accurate calc
+      .reduce((acc, { unix }) => acc + unix, 0);
 
     let totalTimeString = totalSeconds === 0
       ? null
@@ -46,7 +47,9 @@ class Manipura extends React.Component {
         { totalTimeString }
         <div>
           how do you feel today?
-          { this.state.feelings }
+          <div>{ this.state.feelings }</div>
+          why? (will only be presented after choosing the feeling)
+          <input type="text" />
         </div>
       </div>
     );
