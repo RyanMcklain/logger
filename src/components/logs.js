@@ -8,6 +8,8 @@ import Log from './log';
 import Manipura from './manipura';
 import Date from './date';
 
+import { HOUR_FORMAT, DATE_FORMAT } from '../constants/time';
+
 const fooTime = 1552422242000;
 // const fooLogs = [
 //   {
@@ -39,13 +41,13 @@ const fooLogs = [
     id: 1,
     text: 'foo',
     unix: fooTime,
-    formattedTime: moment(fooTime).add(1, 'hour').format('HH:mm')
+    formattedTime: moment(fooTime).add(1, 'hour').format(HOUR_FORMAT)
   },
   {
     id: 2,
     text: 'foolord',
     unix: fooTime,
-    formattedTime: moment(fooTime).add(0.5, 'hour').format('HH:mm')
+    formattedTime: moment(fooTime).add(0.5, 'hour').format(HOUR_FORMAT)
   }
 ];
 
@@ -53,7 +55,7 @@ class Logs extends React.Component {
   constructor() {
     super();
     this.state = {
-      date: moment().format('YYYY-MM-DD'), // '2019-03-14',
+      date: moment().format(DATE_FORMAT), // '2019-03-14',
       logs: fooLogs || localStorage.getItem('logs') || []
     }
 
@@ -77,7 +79,7 @@ class Logs extends React.Component {
     const firstLog = (
       <Log
         key="firstLog"
-        onClick={ this.setLog }
+        onSaveClick={ this.setLog }
         date={ this.state.date }
         first
         last />
@@ -98,7 +100,7 @@ class Logs extends React.Component {
     const lastLog = (
       <Log
         key="lastLog"
-        onClick={ this.setLog }
+        onSaveClick={ this.setLog }
         date={ this.state.date }
         time={ logs[logs.length - 1].formattedTime }
         last />
@@ -119,7 +121,7 @@ class Logs extends React.Component {
 
   focusOnToday() {
     this.setState({
-      date: moment().format('YYYY-MM-DD')
+      date: moment().format(DATE_FORMAT)
     });
   }
 
@@ -133,7 +135,7 @@ class Logs extends React.Component {
         { this.logsUI() }
         <Manipura
           logs={ this.state.logs }
-          dateFormat="YYYY-MM-DD HH:mm:ss"
+          dateFormat={ DATE_FORMAT }
           currentDate={ this.state.date } />
       </Fragment>
     )

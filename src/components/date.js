@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { DATE_FORMAT } from '../constants/time';
 
 const style = {
   fontSize: '10vw'
@@ -7,11 +8,11 @@ const style = {
 
 const Date = ({ date, onChange, onMessageClick }) => {
   let message = ''
-  if (moment(date, 'YYYY-MM-DD').isAfter(moment(), 'days')) {
+  if (moment(date, DATE_FORMAT).isAfter(moment(), 'days')) {
     message = 'are you seeing into the future?';
   }
 
-  if (moment(date, 'YYYY-MM-DD').isBefore(moment(), 'days')) {
+  if (moment(date, DATE_FORMAT).isBefore(moment(), 'days')) {
     message = 'The past is already gone. Forget about it. Focus on this day. Live it.';
   }
 
@@ -28,7 +29,7 @@ const Date = ({ date, onChange, onMessageClick }) => {
 };
 
 Date.defaultProps = {
-  date: moment().format('YYYY-MM-DD')
+  date: moment().format(DATE_FORMAT)
 };
 
 export default Date;

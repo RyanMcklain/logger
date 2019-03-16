@@ -6,6 +6,8 @@ import moment from 'moment';
 import Clock from './clock';
 import Text from './text';
 
+import { DATE_FORMAT, HOUR_FORMAT } from '../constants/time';
+
 const style = {
   display: 'inline-flex'
 };
@@ -14,7 +16,6 @@ class Log extends React.Component {
   constructor(props) {
     super(props);
 
-    const format = 'HH:mm:ss';
     // let endTime = props.time.end && moment(props.time.end).format(format);
     // let startTime = moment(props.time.start).format(format);
     // let endTime = props.time.end;
@@ -22,7 +23,7 @@ class Log extends React.Component {
 
     let formattedTime = props.time;
     if (props.last || props.first) {
-      formattedTime = moment().format(format);
+      formattedTime = moment().format(HOUR_FORMAT);
     }
 
     // if (props.first) {
@@ -30,7 +31,6 @@ class Log extends React.Component {
     // }
 
     this.state = {
-      format,
       text: props.text,
       formattedTime,
       // endTime,
@@ -58,7 +58,7 @@ class Log extends React.Component {
       // clearer logic? also why is this not in the constructor?
       // I remember it has something to do with last/first props, but cannot
       // recall exactly what.
-      const formattedTime = moment(this.props.time.start, this.state.format).format(this.state.format);
+      const formattedTime = moment(this.props.time.start, HOUR_FORMAT).format(HOUR_FORMAT);
       console.log('formattedTime', formattedTime);
       this.setState({
         formattedTime,
@@ -74,7 +74,7 @@ class Log extends React.Component {
 
   tick() {
     this.setState({
-      formattedTime: moment().format(this.state.format)
+      formattedTime: moment().format(HOUR_FORMAT)
     });
   }
 
@@ -97,10 +97,10 @@ class Log extends React.Component {
     // TODO: is adding seconds to a date that contains only minutes will screw this up?
     // const startUnix = moment(startDate, 'YYYY-MM-DD HH:mm:ss').valueOf();
     const date = `${this.props.date} ${this.state.formattedTime}`;
-    const unix = moment(date, 'YYYY-MM-DD HH:mm:ss').valueOf();
+    const unix = moment(date, DATE_FORMAT).valueOf();
 
 
-    this.props.onClick({
+    this.props.onSaveClick({
       id: unix + this.state.text,
       text: this.state.text,
       formattedTime: this.state.formattedTime,
@@ -124,7 +124,7 @@ class Log extends React.Component {
     }
 
     this.setState({
-      userSetEndTime: event.target.name === 'endTime',
+      userSetEndTime: true,
       [event.target.name]: event.target.value
     });
   }
@@ -134,7 +134,7 @@ class Log extends React.Component {
   }
 
   startClock(event) {
-    if (event && event.target.name === 'endTime' && this.state.userSetEndTime) {
+    if (event && this.state.userSetEndTime) {
       return;
     }
 

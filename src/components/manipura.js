@@ -2,6 +2,9 @@
 predict, give stats, and give hints about the fututre */
 import React from 'react';
 import moment from 'moment';
+
+import { HOUR_FORMAT } from '../constants/time';
+
 window.moment = moment;
 
 const convertSecondsToHoursString = seconds => {
@@ -33,11 +36,22 @@ class Manipura extends React.Component {
     }
 
 
+    let foo = 0;
     const totalSeconds = this.props.logs
-      .filter(({ unix }) => moment(this.props.currentDate).isSame(unix, 'day'))
+      .filter(log => {
+        console.log(log.formattedTime);
+        return moment(this.props.currentDate).isSame(log.unix, 'day')
+      })
       // TODO: this is not an accurate calc
-      .reduce((acc, { unix }) => acc + unix, 0);
+      .reduce((accumulator, log) => {
+        if (!accumulator) {
+          return moment(log.formattedTime, HOUR_FORMAT).valueOf();
+        }
 
+        return moment(log.formattedTime, HOUR_FORMAT).valueOf() - accumulator;
+      }, 0);
+
+    console.log('TOTAL', totalSeconds);
     let totalTimeString = totalSeconds === 0
       ? null
       : `total: ${convertSecondsToHoursString(totalSeconds / 1000)}`;
