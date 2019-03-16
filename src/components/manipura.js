@@ -35,26 +35,24 @@ class Manipura extends React.Component {
       return null;
     }
 
-
-    let foo = 0;
     const totalSeconds = this.props.logs
-      .filter(log => {
-        console.log(log.formattedTime);
-        return moment(this.props.currentDate).isSame(log.unix, 'day')
-      })
-      // TODO: this is not an accurate calc
-      .reduce((accumulator, log) => {
-        if (!accumulator) {
-          return moment(log.formattedTime, HOUR_FORMAT).valueOf();
+      .filter(log => moment(this.props.currentDate).isSame(log.unix, 'day'))
+      .reduce((accumulator, log, index, logs) => {
+        if (!logs[index + 1]) {
+          return accumulator;
         }
 
-        return moment(log.formattedTime, HOUR_FORMAT).valueOf() - accumulator;
+        const nextLogTime = moment(logs[index + 1].formattedTime, HOUR_FORMAT).valueOf();
+        const thisLogTime = moment(log.formattedTime, HOUR_FORMAT).valueOf();
+        console.log(nextLogTime, thisLogTime);
+        return accumulator + thisLogTime - nextLogTime;
       }, 0);
 
     console.log('TOTAL', totalSeconds);
     let totalTimeString = totalSeconds === 0
       ? null
-      : `total: ${convertSecondsToHoursString(totalSeconds / 1000)}`;
+      // TODO: understand why an absolute value is needed here
+      : `total: ${convertSecondsToHoursString(Math.abs(totalSeconds / 1000))}`;
 
     return (
       <div>
