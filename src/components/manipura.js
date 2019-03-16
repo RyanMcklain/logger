@@ -34,11 +34,9 @@ class Manipura extends React.Component {
 
 
     const totalSeconds = this.props.logs
-    .filter(({ unix }) => moment(this.props.currentDate).isSame(unix, 'day'))
-    .reduce((acc, { time }) => acc + time.endUnix - time.startUnix, 0);
+      .filter(({ unix }) => moment(this.props.currentDate).isSame(unix, 'day'))
+      .reduce((acc, { time }) => acc + time.endUnix - time.startUnix, 0);
 
-    console.log(this.props.logs
-      .filter(log => moment(this.props.currentDate).isSame(log.unix, 'day')));
     let totalTimeString = totalSeconds === 0
       ? null
       : `total: ${convertSecondsToHoursString(totalSeconds / 1000)}`;
