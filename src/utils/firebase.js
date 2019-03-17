@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/auth';
-// import firebaseApp from 'firebase/app';
 
 var config = {
   apiKey: "AIzaSyAfmw8BBbYUxPwXwP8kkLqsHihNScUmz4A",
@@ -16,28 +15,21 @@ const firebaseApplication = firebase.initializeApp(config);
 const defaultDatabase = firebaseApplication.database();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-console.log(defaultDatabase);
-console.log(firebase.app().name);
+const setUserLog = (userId, log) => {
+  defaultDatabase.ref('/logs/' + userId).push(log);
+}
 
-function writeUserData(userId, name, email, imageUrl) {
-  defaultDatabase.ref('users/' + userId).set({
-    username: 'foo2',
-    email: 'lord',
-    profile_picture : 'imageUrl'
+const getUserLogs = userId => {
+  return defaultDatabase.ref('/logs/' + userId).once('value').then(snapshot => {
+    const logs = snapshot.val() || [];
+    console.log(logs);
   });
 }
 
-const getUserData = (userId) => {
-  return defaultDatabase.ref('/users/' + userId).once('value').then(function (snapshot) {
-    var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
-    console.log(username);
-  });
-}
-
-firebase.auth().onAuthStateChanged(function(user) {
+firebase.auth().onAuthStateChanged(user => {
   if (user) {
-    writeUserData(user.uid);
-    getUserData(user.uid);
+    // writeUserData(user.uid);
+    // getUserData(user.uid);
   } else {
     firebase.auth().signInWithPopup(provider).then(function(result) {
       // This gives you a Google Access Token. You can use it to access the Google API.
