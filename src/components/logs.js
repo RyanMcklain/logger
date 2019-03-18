@@ -52,11 +52,12 @@ const fooLogs = [
 ];
 
 class Logs extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {
       date: moment().format(DATE_FORMAT), // '2019-03-14',
-      logs: fooLogs || localStorage.getItem('logs') || []
+      logs: props.logs || []
     }
 
     this.logsUI = this.logsUI.bind(this);
